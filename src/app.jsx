@@ -84,7 +84,8 @@ class IssueList extends React.Component {
          this.loadData();
     }
     loadData() {
-        fetch('/api/issues').then(response =>response.json())
+        fetch('/api/issues')
+            .then(response =>response.json())
             .then(data => {
                 console.log("Nombre Total d’enregistrements:", data._metadata.total_count);
                 data.records.forEach(issue => {
