@@ -6,6 +6,9 @@ const MaterielRow = (props) => (
         <td>{props.materiel.id}</td> 
         <td>{props.materiel.nom}</td>
         <td>{props.materiel.qte}</td>
+        <td><a href={'/materiels/edit/' + props.materiel.id}><button className="btn btn-warning">Edit</button></a></td>
+        <td><button className="btn btn-danger">Delete</button></td>
+
    </tr> 
 ) ;
 
@@ -23,7 +26,7 @@ function MaterielTable(props) {
              <tbody>{materielRows}</tbody>
          </table>
      );
-  }
+}
 
 class AddMateriel extends React.Component {
   constructor() {
@@ -55,6 +58,36 @@ class AddMateriel extends React.Component {
   }
 }
 
+class EditMateriel extends React.Component {
+    constructor() {
+      super() ;
+      this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    handleSubmit(e) {
+      e.preventDefault();
+      var form = document.forms.materiels;
+  
+      this.props.createMateriel({
+          nom : form.nom.value,
+          qte : form.qte.value
+      });
+      // mets à zéro le formulaire pour la nouvelle saisie
+      form.nom.value = ""; 
+      form.qte.value = "";
+    }
+    render() {
+      return (
+        <div>
+          <form name="materiels" onSubmit={this.handleSubmit}>
+              <input type="text" name="nom" placeholder="Nom" />
+              <input type="text" name="qte" placeholder="Qte" />
+              <button className="btn btn-warning">Edit</button>
+          </form>
+        </div>
+      );
+    }
+  }
+
 class Materiels extends React.Component {
     constructor() {
         super();
@@ -76,11 +109,29 @@ class Materiels extends React.Component {
         axios.post('/api/materiels', materiel)
             .then((result) => {
                 console.log(result) ;
-        })
-        .catch((error) => {
-            alert(error);
-        });
+            })
+            .catch((error) => {
+                alert(error);
+            });
         this.getMateriel() ;
+    }
+
+    deleteMateriel(materiel) {
+        const idMateriel = materiel.id ;
+        axios.delete('/api/materiels/' + idMateriel)
+            .then((result) => {
+                const materielIndexToDelete = this.state.materiels.findIndex(
+                    (mat) => {
+                      if (mat === materiel) {
+                        return true;
+                      }
+                    }
+                );
+                this.setState({ materiels : this.state.materiels.splice(materielIndexToDelete, 1) });
+            })
+            .catch((error) => {
+                alert(error);
+            });
     }
 
     render() {

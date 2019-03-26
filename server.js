@@ -81,6 +81,51 @@ app.post('/api/materiels', (req, res) => {
               result(null, err);
            }
          else{   
+             console.log("Materiel added") ;
+        }
+    }) ;
+
+});
+
+app.put('/api/edit/materiels/:id', (req, res) => {
+    const materiel = req.body;
+    const idMateriel = req.params.id ;
+    connection.query('UPDATE materiels SET nom = ?, qte = ? WHERE id = ?',[materiel.nom, materiel.qte, idMateriel] , function(err, res) {
+        if(err) {
+            console.log("error: ", err);
+              result(null, err);
+           }
+         else{   
+             console.log("Materiel updated") ;
+        }
+    }) ;
+
+});
+
+app.get('/materiels/edit/:id', (req, res) => {
+    const idMateriel = req.params.id ;
+    connection.query('SELECT * FROM materiels WHERE id = ?',[idMateriel] , function(err, rows) {
+        if(err) {
+            console.log("error: ", err);
+              result(null, err);
+        }
+        else { 
+            res.json({ records: rows });  
+            console.log("Materiel updated") ;
+        }
+    }) ;
+
+});
+
+app.delete('/api/materiels/:id', (req, res) => {
+    const idMateriel = req.params.id ;
+    connection.query('DELETE FROM materiels WHERE id = ?',[idMateriel] , function(err, rows) {
+        if(err) {
+            console.log("error: ", err);
+              result(null, err);
+        }
+        else {  
+            console.log("Materiel deleted") ;
         }
     }) ;
 
